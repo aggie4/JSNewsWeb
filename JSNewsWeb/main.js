@@ -1,14 +1,75 @@
 let articles = []; //빈 배열을 만들어 놓는다.
+let menus = document.querySelectorAll('#menu-list button'); // html에 있는 메뉴를 불러온다 , 클릭이벤트를 만들기 위해서
+menus.forEach((menu) => menu.addEventListener('click', (event) => getNewsByTopic(event))); //foreach사용, 각각의 메뉴를 클릭하면 getNewsByTopic 함수 실행 event 클릭한 인자값 받기
+let searchButton = document.getElementById('search-button'); // 버튼태그 연결
+let url; // 전역변수로 만들어서 let을 지운다.
 
-const getLatesNews = async () => {
-    let url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10`);
+const getNews = async () => {
     let header = new Headers({ 'x-api-key': 'iLhEJlB1qDCLavaq_8zd7iQTST7mIl0_iM7EZZUm2Vs' });
     let response = await fetch(url, { headers: header });
     let data = await response.json();
     news = data.articles;
-    console.log(news);
     render();
+    // header = new Headers({ })
+    // fetch = 대기상태를 말한다
+    // async는 await 세트메뉴라고 생각하면 된다. "Respones" 응답이 왔다는 의미
+    // 펑션 앞에다가 async, fetch앞에다가 await
+    // json() = 왠만한 서버통신에 사용한다. 객체랑 같다. 다만, "텍스트 타입"인 객체이다. 시간이 걸려서 await 사용, 데이터 통신이 많으면 오류가 발생할 수 있다, 5초 정도 있다가 새로고침 하면 된다.
+    // news = 우리가 볼 뉴스가 담겨져있다.
+    // articles = [] 빈 배열에 만든 이유는 데이터를 불러왔는데, 모든 컨텐츠가 articles에 담겨져 있어서.
+    // render() = 브라우저에 표시 할 내용
 };
+/* 
+    "코드 리팩토링"
+    코드를 짜보니 중복부분이 많아서 코드가 더럽고 복잡해진다. 그래서 하나로 묶어서 사용한다.
+    url부분에서 오류가 걸려 전역변수로 다시 만들었다.
+    처음부터 할 필요는 없다. 코드를 다 짠 뒤에, 다시 작업을 하는 게 좋다.
+*/
+
+const getLatesNews = async () => {
+    url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=sport&page_size=10`);
+    getNews();
+};
+// API 정보 불러오기  , 자바스크립트에서 제공해주는 툴 , url 클레스 이용하기
+// new URL(`백틱 사용해서 링크 연결하기`) , 분석을 해준다
+
+const getNewsByTopic = async (event) => {
+    //console.log('클릭 확인', event.target.textContent);
+    let topic = event.target.textContent.toLowerCase();
+    url = new URL(`https://api.newscatcherapi.com/v2/latest_headlines?countries=KR&topic=${topic}&page_size=10`);
+    //console.log('url확인', url);
+    getNews();
+    console.log('토픽 뉴스 잘 나옴?', data);
+};
+/* 
+    위에 만든 forEach문 즉 함수를 만든다.
+    링크를 연결을 시켜서 ${topic}로 연결
+    topic변수를 만들어서 버튼을 클릭을 했을 때 어떤 걸 클릭했는 지 구분하고 소문자로 바꾼다.
+    toLowerCase() = 소문자로 만들어주는 함수
+    위에 만든 header, response, data, news, render 를 복사하고 await가 있으니 함수 앞에 async를 붙혀서 오류가 나지 않게 만든다.
+*/
+const getNewsByKeyword = async () => {
+    // 1. 검색 키워드 읽어 오기
+    // 2. 이거를 가지고 url에 검색 키워드 붙이기.
+    // 3. header 준비
+    // 4. url 부르기..
+    // 5. 데이터 가지고 오기 ..
+    // 6. 데이터 보여주기..
+    let keyword = document.getElementById('search-input').value;
+    url = new URL(`https://api.newscatcherapi.com/v2/search?q=${keyword}&countries=KR&page_size=10`);
+    getNews();
+    //위에 만든 header, response, data, news, render 를 복사하고 await가 있으니 함수 앞에 async를 붙혀서 오류가 나지 않게 만든다.
+    //URL에 있는 from 즉 날짜를 지운다.
+};
+/* 
+    버튼이 클릭 됐을 때의 함수,
+    화살표 함수를 만들면 순서가 매우매우 중요하다.
+    모든 것은 정의 하고 난 뒤에 사용 가능, 특히 let const
+    정의를 하고 난 뒤에 사용이 되기 때문에 searchButton.addEventListener('click', getNewsByKeyword); 키워드를 아래로 옮김.
+    호이스팅 때문에 오류가 나기 때문에 정의를 하고 난 뒤에 사용하기 때문에 아래로 옮겼다.
+    일반함수로 사용하게 되면 옮기지 않아도 된다 추가로 onclick도 가능하다.
+    자세한 내용은 프로젝트3 기본원리에 있다.
+*/
 const render = () => {
     let newsHTML = '';
 
@@ -43,14 +104,5 @@ const render = () => {
     */
     document.getElementById('news-board').innerHTML = newsHTML;
 };
+searchButton.addEventListener('click', getNewsByKeyword); // 버튼이 클릭됐을 때 함수 실행
 getLatesNews();
-// API 정보 불러오기  , 자바스크립트에서 제공해주는 툴 , url 클레스 이용하기
-// new URL(`백틱 사용해서 링크 연결하기`) , 분석을 해준다
-// header = new Headers({ })
-// fetch = 대기상태를 말한다
-// async는 await 세트메뉴라고 생각하면 된다. "Respones" 응답이 왔다는 의미
-// 펑션 앞에다가 async, fetch앞에다가 await
-// json() = 왠만한 서버통신에 사용한다. 객체랑 같다. 다만, "텍스트 타입"인 객체이다. 시간이 걸려서 await 사용, 데이터 통신이 많으면 오류가 발생할 수 있다, 5초 정도 있다가 새로고침 하면 된다.
-// news = 우리가 볼 뉴스가 담겨져있다.
-// articles = [] 빈 배열에 만든 이유는 데이터를 불러왔는데, 모든 컨텐츠가 articles에 담겨져 있어서.
-// render() = 브라우저에 표시 할 내용
