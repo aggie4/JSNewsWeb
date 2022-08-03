@@ -2,14 +2,35 @@ let articles = []; //빈 배열을 만들어 놓는다.
 let menus = document.querySelectorAll('#menu-list button'); // html에 있는 메뉴를 불러온다 , 클릭이벤트를 만들기 위해서
 menus.forEach((menu) => menu.addEventListener('click', (event) => getNewsByTopic(event))); //foreach사용, 각각의 메뉴를 클릭하면 getNewsByTopic 함수 실행 event 클릭한 인자값 받기
 let searchButton = document.getElementById('search-button'); // 버튼태그 연결
-let url; // 전역변수로 만들어서 let을 지운다.
+let url; // 전역변수로 만들어서 기존에 썼던 let을 지운다.
+let page = 1; // 전역변수
+let totalPage = 1; // 전역변수
 
 const getNews = async () => {
-    let header = new Headers({ 'x-api-key': 'iLhEJlB1qDCLavaq_8zd7iQTST7mIl0_iM7EZZUm2Vs' });
-    let response = await fetch(url, { headers: header });
-    let data = await response.json();
-    news = data.articles;
-    render();
+    //에러 핸들링 만들기.
+    try {
+        let header = new Headers({ 'x-api-key': 'iLhEJlB1qDCLavaq_8zd7iQTST7mIl0_iM7EZZUm2Vs' });
+        url.searchParams.set('page', page);
+        console.log('유알엘 잘 생김??', url);
+        let response = await fetch(url, { headers: header });
+        let data = await response.json();
+        if (response.status == 200) {
+            news = data.articles;
+            console.log('내가 받은 데이터는?', data);
+            if (data.total_hits == 0) {
+                throw new Error('검색된 결과가 없습니다.');
+            }
+            totalPage = data.total_pages;
+            page = data.page;
+            render();
+            pagention();
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.log('잡힌 에러는?', error.message);
+        errorRender(error.message);
+    }
     // header = new Headers({ })
     // fetch = 대기상태를 말한다
     // async는 await 세트메뉴라고 생각하면 된다. "Respones" 응답이 왔다는 의미
@@ -104,5 +125,50 @@ const render = () => {
     */
     document.getElementById('news-board').innerHTML = newsHTML;
 };
+const errorRender = (message) => {
+    let errorHTML = `<div class="alert alert-danger text-center" role="alert">${message}</div>`;
+    document.getElementById('news-board').innerHTML = errorHTML;
+};
+/* 
+    errorRender 함수를 생성
+    부트스트랩에 있는 경고창을 갖다 쓰고 ${메세지}를 동적으로 추가를 한 뒤,
+    브라우저에 나타나게 설정
+*/
+const pagention = () => {
+    let pagentionHTML = ``;
+    // 1. 토탈페이지 수를 알아야 한다.
+    // 2. 내가 현제 어떤 페이지를 보고 있는 지를 알아야 한다.
+    // 3. 페이지 그룹을 찾아야 한다.
+    // 4. 이 그룹을 베이스로 마지막 페이지가 뭔지 찾고,
+    // 5. 첫번째 페이지가 뭔지를 찾고,
+    // 6. 첫페이지부터 마지막까지 프린트, 출력해주기.
+    let pageGroup = Math.ceil(page / 5); //3번
+    let last = pageGroup * 5; //4번
+    let first = last - 4; //5번
+    pagentionHTML = `<li class="page-item">
+    <a class="page-link" href="#" aria-label="Previous" onclick = "moveToPage(${page - 1})">
+    <span aria-hidden="true">&lt;</span>
+    </a></li>`;
+    for (let i = first; i <= last; i++) {
+        pagentionHTML += `<li class="page-item ${page == i ? 'active' : ''}"><a class="page-link" href="#" onclick="moveToPage(${i})">${i}</a></li>`;
+    } // onclick함수추가해서 만들기. ${i}를 추가해서 어떤 페이지인지 알려준다. 페이지를 눌러도 아무런 변화가 없기 때문에
+    pagentionHTML += `<li class="page-item">
+    <a class="page-link" href="#" aria-label="Next" onclick = "moveToPage(${page + 1})">
+    <span aria-hidden="true">&gt;</span>
+    </a></li>`;
+    document.querySelector('.pagination').innerHTML = pagentionHTML;
+};
+const moveToPage = (pageNumber) => {
+    // 페이지 이동
+    // 1. 우리가 이동하고 싶은 페이지를 알아야 한다. 1인지 8인지 19인지 143인지..
+    // 2. 이 페이지를 가지고, API를 호출해준다.
+    console.log(pageNumber);
+    page = pageNumber;
+    getNews();
+};
+/* 
+    페이지네이션 만들기.
+    
+*/
 searchButton.addEventListener('click', getNewsByKeyword); // 버튼이 클릭됐을 때 함수 실행
 getLatesNews();

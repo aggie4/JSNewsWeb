@@ -204,6 +204,13 @@
                 try에서 에러가 생기면 catch 블럭에 error 정보를 error 객체 안에 넣어서 매개변수로 전달해 준다. <br />
                 Error 객체를 살펴보면 안에 name, message 등 여러 이용가능한 속성값이 있지만, 에러를 보기위해 Error.message 만 기억해도 좋다.
             </li>
+            <li>
+                <h2>API 응답에서 에러가 났는 지 확인하는 방법</h2>
+                1. response.status 를 통해서 아는 방법 : 주로 디테일 하게 어떤 종류인지 에러 코드를 보여준다. (400,401 등등) <br />
+                2. response.ok 를 보는 방법 : ok가 true면 정상, false면 비정상, 자세한 코드는 나타나지 않는다. <br />
+                3. 응답에 따라서 throw를 이용해서 보여주고 싶은 메세지와 함께 에러를 catch로 던져 줄 수 있다. <br />
+                4. 그 외에 내가 에러를 발생시키고 싶은 상황이 있다면, throw를 통해서 강제로 에러를 던져 줄 수 있다.
+            </li>
         </ul>
         <script>
             /* console.log(1);
