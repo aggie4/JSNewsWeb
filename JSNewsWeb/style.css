@@ -33,3 +33,12 @@
     padding: 1em;
     border-bottom: 2px solid black;
 }
+.pagination {
+    justify-content: center;
+}
+.page-link {
+    color: black;
+}
+.page-link:hover {
+    background-color: beige;
+}

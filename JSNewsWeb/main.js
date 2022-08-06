@@ -146,16 +146,29 @@ const pagention = () => {
     let last = pageGroup * 5; //4번
     let first = last - 4; //5번
     pagentionHTML = `<li class="page-item">
+    <a class="page-link" href="#" aria-label="Previous" onclick = "moveToPage(${page / 0})">
+    <span aria-hidden="true">&laquo;</span>
+    </a></li>
+
+    <li class="page-item">
     <a class="page-link" href="#" aria-label="Previous" onclick = "moveToPage(${page - 1})">
     <span aria-hidden="true">&lt;</span>
     </a></li>`;
+
     for (let i = first; i <= last; i++) {
         pagentionHTML += `<li class="page-item ${page == i ? 'active' : ''}"><a class="page-link" href="#" onclick="moveToPage(${i})">${i}</a></li>`;
     } // onclick함수추가해서 만들기. ${i}를 추가해서 어떤 페이지인지 알려준다. 페이지를 눌러도 아무런 변화가 없기 때문에
-    pagentionHTML += `<li class="page-item">
+
+    pagentionHTML += `
+    <li class="page-item">
     <a class="page-link" href="#" aria-label="Next" onclick = "moveToPage(${page + 1})">
     <span aria-hidden="true">&gt;</span>
+    </a></li>
+    <li class="page-item">
+    <a class="page-link" href="#" aria-label="Previous" onclick = "moveToPage(${page + 5})">
+    <span aria-hidden="true">&raquo;</span>
     </a></li>`;
+    //마지막 페이지로 옮기는 것 안됨.. 뭐가 문제인 지 모르겠음
     document.querySelector('.pagination').innerHTML = pagentionHTML;
 };
 const moveToPage = (pageNumber) => {
@@ -168,7 +181,17 @@ const moveToPage = (pageNumber) => {
 };
 /* 
     페이지네이션 만들기.
-    
+    total page : 15
+    page(현재 보고 있는 페이지) : 12
+    page Group : 3
+    5칸씩 보여주고 싶다 가정하에)
+    1,2,3,4,5
+    1번그룹 : 1 ~ 5
+    2번그룹 : 6 ~ 10
+    3번그룹 : 11 ~ 15
+    공식 : ex) 12페이지가 있다 5페이지로 보여주고 싶다하면 12 나누기 5 그냥 올림 하면 3 그룹 찾는 방법 = Math.ceil() 올림 할 때 쓰는 함수
+    마지막을 구하는 방법  = 그룹 * 5
+
 */
 searchButton.addEventListener('click', getNewsByKeyword); // 버튼이 클릭됐을 때 함수 실행
 getLatesNews();
