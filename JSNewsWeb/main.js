@@ -1,9 +1,11 @@
+// API 출처 명시하기..!! 중요!
+// https://app.newscatcherapi.com/dashboard/
 let articles = []; //빈 배열을 만들어 놓는다.
 let menus = document.querySelectorAll('#menu-list button'); // html에 있는 메뉴를 불러온다 , 클릭이벤트를 만들기 위해서
 menus.forEach((menu) => menu.addEventListener('click', (event) => getNewsByTopic(event))); //foreach사용, 각각의 메뉴를 클릭하면 getNewsByTopic 함수 실행 event 클릭한 인자값 받기
 let searchButton = document.getElementById('search-button'); // 버튼태그 연결
 let url; // 전역변수로 만들어서 기존에 썼던 let을 지운다.
-let page = 1; // 전역변수
+let page; // 전역변수
 let totalPage = 1; // 전역변수
 
 const getNews = async () => {
