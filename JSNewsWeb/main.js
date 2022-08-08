@@ -33,6 +33,7 @@ const getNews = async () => {
         console.log('잡힌 에러는?', error.message);
         errorRender(error.message);
     }
+
     // header = new Headers({ })
     // fetch = 대기상태를 말한다
     // async는 await 세트메뉴라고 생각하면 된다. "Response" 응답이 왔다는 의미
@@ -42,6 +43,7 @@ const getNews = async () => {
     // articles = [] 빈 배열에 만든 이유는 데이터를 불러왔는데, 모든 컨텐츠가 articles에 담겨져 있어서.
     // render() = 브라우저에 표시 할 내용
 };
+
 /* 
     "코드 리팩토링"
     코드를 짜보니 중복부분이 많아서 코드가 더럽고 복잡해진다. 그래서 하나로 묶어서 사용한다.
@@ -107,11 +109,12 @@ const render = () => {
             <img class="news-img-size" src="${news.media || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqEWgS0uxxEYJ0PsOb2OgwyWvC0Gjp8NUdPw&usqp=CAU'}" alt="뉴스 이미지" />
         </div>
         <div class="col-lg-8">
-            <h2>${news.title}</h2>
+            <h4><a href="${news.link}" class="news-link" target="_blank">${news.title}</a></h4>
             <p>${news.summary == null || news.summary == '' ? '내용 없음' : news.summary.length > 200 ? news.summary.substring(0, 200) + '...' : news.summary}</p>
             <div>${news.rights || 'No source'} * ${moment(news.published_date).fromNow()}</div>
         </div>
     </div>`;
+            // 링크타고 넘어가는 방법
         })
         .join('');
     /* ``동적인 값을 추가 할 수 있어서 ${}를 써서 사진과 내용을 변경 */

@@ -42,3 +42,7 @@
 .page-link:hover {
     background-color: beige;
 }
+.news-link {
+    text-decoration: none;
+    color: #000;
+}
